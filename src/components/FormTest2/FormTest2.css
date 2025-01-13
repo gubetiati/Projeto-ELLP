@@ -1,0 +1,63 @@
+.container{
+    width: 50vw;
+    height: 80vh;
+    margin: 0 auto; /* Centraliza o formulário na página */
+    padding: 16px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column; /* Alinha os elementos verticalmente */
+    align-items: flex-start; /* Alinha o conteúdo à esquerda */
+    margin-bottom: 16px;
+    gap: 4px; /* Espaço entre o label e o input */
+    margin: 20px 20px;
+}
+
+.div-botao {
+    margin-top: 47%;
+}
+
+button{
+    background-color: #218AD3;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    width: 400px;
+}
+
+div label {
+    color: rgb(22, 22, 22);
+    font-size: 19px;
+    display: block; 
+    justify-content: start;
+}
+
+input[type="text"],
+input[type="email"] {
+    background-color: rgb(207, 207, 207);
+    color: black;
+    border: none;
+    border-radius: 10px;
+    width: 30%; /* Opcional: ajusta o tamanho do input para o contêiner */
+    padding: 8px; /* Adiciona espaçamento interno ao input */
+}
+
+.error{
+    color: rgb(0, 68, 255);
+}
+
+.titulo{
+    display: flex;
+    margin-left: 15px;
+    margin-bottom: -20px;
+    color: black;
+}
+
+.header{
+    margin-top: -8%;
+}
+

@@ -1,17 +1,18 @@
 import { useState } from 'react'
 import './App.css'
 import TextField from './components/TextField/TextField'
-import Form from './components/Form/Form'
+import SideBar from './components/SideBar/SideBar'
+import FormTest2 from './components/FormTest2/FormTest2'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
+    <> 
+      
       <div>
-        <Form/>
+        <FormTest2/>
+        
       </div>
-     
+      
     </>
   )
 }
