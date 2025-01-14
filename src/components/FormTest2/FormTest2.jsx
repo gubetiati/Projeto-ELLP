@@ -20,37 +20,52 @@ export default function FormTest2() {
                     <h2>Aluno:</h2>
                 </div>
 
-                <form onSubmit={handleSubmit(onSubmit)}> {/* Form envolvido no handleSubmit */}
-                    <div className="form-group">
-                        <label>Nome</label>
-                        <input 
-                            type="text" 
-                            placeholder="Digite seu nome" 
-                            {...register('nome', { required: 'O nome é obrigatório' })} 
-                        />
-                        {errors.nome && <p className="error">{errors.nome.message}</p>}
-                    </div>
+                <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="form-row">
+            <div className="form-group">
+                <label>Nome</label>
+                <input 
+                    type="text" 
+                    placeholder="Digite seu nome" 
+                    {...register('nome', { required: 'O nome é obrigatório' })} 
+                />
+                {errors.nome && <p className="error">{errors.nome.message}</p>}
+            </div>
 
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input 
-                            type="email" 
-                            placeholder="Digite seu email" 
-                            {...register('email', { 
-                                required: 'O email é obrigatório',
-                                pattern: {
-                                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                    message: 'Digite um email válido'
-                                }
-                            })} 
-                        />
-                        {errors.email && <p className="error">{errors.email.message}</p>}
-                    </div>
+            <div className="form-group">
+                <label>Sobrenome</label>
+                <input 
+                    type="text" 
+                    placeholder="Digite seu sobrenome" 
+                    {...register('sobrenome', { 
+                        required: 'O sobrenome é obrigatório',
+                    })} 
+                />
+                {errors.sobrenome && <p className="error">{errors.sobrenome.message}</p>}
+            </div>
 
-                    <div className="div-botao">
-                        <button type="submit">Salvar</button>
-                    </div>
-                </form>
+            <div className="form-group">
+                <label>Email</label>
+                <input 
+                    type="email" 
+                    placeholder="Digite seu email" 
+                    {...register('email', { 
+                        required: 'O email é obrigatório',
+                        pattern: {
+                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                            message: 'Digite um email válido'
+                        }
+                    })} 
+                />
+                {errors.email && <p className="error">{errors.email.message}</p>}
+            </div>
+
+        </div>
+
+        <div className="div-botao">
+            <button type="submit">Salvar</button>
+        </div>
+    </form>
             </div>
         </>
     );
