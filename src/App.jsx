@@ -7,9 +7,10 @@ import FormTest2 from './components/FormTest2/FormTest2'
 function App() {
   return (
     <> 
-      
+      <SideBar/>
       <div>
         <FormTest2/>
+        
         
       </div>
       
