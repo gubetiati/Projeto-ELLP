@@ -28,6 +28,15 @@
   transition: background-color 0.3s; 
 }
 
+.sidebar ul li.active a {
+  color: white;
+  transform: scale(1.1); 
+}
+
+.sidebar ul li.active a img {
+  filter: brightness(0) invert(1); 
+}
+
 .sidebar ul li a:hover {
   background-color: #34495e;
 }
