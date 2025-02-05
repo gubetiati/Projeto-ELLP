@@ -15,6 +15,13 @@ body {
     box-shadow: 0 20px 8px rgba(0, 0, 0, 0.1);
 }
 
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
@@ -69,6 +76,14 @@ button {
     text-align: center;
 }
 
+.full-width {
+    grid-column: 1 / -1;
+  }
+  
+  #complemento {
+    max-width: 100%;
+  }
+
 .error {
     color: rgb(255, 0, 0);
     font-size: 12px;
@@ -106,4 +121,55 @@ button {
     width: 40%;
     border-radius: 10px;
     justify-content: center;
+}
+
+/* For desktop layout */
+.checkbox-container {
+    grid-column: 2 / -1; /* Start from 2nd column, span to end */
+    display: flex;
+    justify-content: flex-end; /* Align to right */
+    margin-top: 10px;
+}
+
+.checkbox-container label {
+    width: auto; /* Override 100% width */
+    max-width: 300px; /* Adjust based on your needs */
+    white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .checkbox-container {
+        grid-column: 1 / -1; /* Full width on tablet */
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .checkbox-container label {
+        white-space: normal; /* Allow text wrapping on mobile */
+    }
+}
+
+
+@media (max-width: 1200px) {
+    .container {
+        width: 80vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .container {
+        width: 95vw;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
 }

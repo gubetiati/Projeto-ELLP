@@ -28,7 +28,7 @@ export default function ListaBimestre({ titulo, label, value, itens, onChange })
                 </div>
                 
             </div>
-            <button className='botao'>Adicionar</button>
+            {/* <button className='botao'>Adicionar</button> */}
         </div>
     );
 }

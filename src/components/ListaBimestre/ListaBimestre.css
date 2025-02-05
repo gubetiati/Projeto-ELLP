@@ -37,6 +37,7 @@
     justify-content: center;
 }
 
+
 .nota-item {
     display: flex;
     flex-direction: column;
@@ -60,7 +61,7 @@
 
 .botao {
     font-size: 14px;
-    width: 84%;
+    width: 100%;
     height: 12%;
     padding: 10px 0; 
     text-align: center;

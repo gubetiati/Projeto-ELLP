@@ -3,7 +3,7 @@ import './Form.css';
 import ListaBimestre from '../ListaBimestre/ListaBimestre';
 
 export default function Form() {
-    const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm();
+    const { register, handleSubmit, formState: { errors, isSubmitting }, watch, setValue } = useForm();
 
     const bimestre = ['2024/4', '2025/1', '2025/2', '2025/3', '2025/4'];
     const notaAntiga = watch('notaAntiga', bimestre[0]);
@@ -57,22 +57,25 @@ export default function Form() {
                     
                     <legend>Endereço</legend>
                     <div className="form-row">
-                        {[
-                            { label: 'Rua', name: 'rua' },
-                            { label: 'Número', name: 'numero' },
-                            { label: 'Bairro', name: 'bairro' },
-                            { label: 'Complemento', name: 'complemento', required: false },
-                        ].map(({ label, name, required = true }) => (
-                            <div className="form-group" key={name}>
-                                <label htmlFor={name}>{label}</label>
-                                <input
-                                    type="text"
-                                    id={name}
-                                    {...register(name, required ? { required: `${label} é obrigatório(a)` } : {})}
-                                />
-                                {errors[name] && <p className="error">{errors[name].message}</p>}
-                            </div>
-                        ))}
+                    {[
+                        { label: 'Rua', name: 'rua' },
+                        { label: 'Número', name: 'numero' },
+                        { label: 'Bairro', name: 'bairro' },
+                        { label: 'Complemento', name: 'complemento', required: false },
+                    ].map(({ label, name, required = true }) => (
+                        <div 
+                        className={`form-group ${name === 'complemento' ? 'full-width' : ''}`} 
+                        key={name}
+                        >
+                        <label htmlFor={name}>{label}</label>
+                        <input
+                            type="text"
+                            id={name}
+                            {...register(name, required ? { required: `${label} é obrigatório(a)` } : {})}
+                        />
+                        {errors[name] && <p className="error">{errors[name].message}</p>}
+                        </div>
+                    ))}
                     </div>
                     
                     <legend>Família</legend>
@@ -104,6 +107,35 @@ export default function Form() {
                                 {errors[name] && <p className="error">{errors[name].message}</p>}
                             </div>
                         ))}
+
+                        <div className="form-group">
+                            <label htmlFor="internet">
+                            <input
+                                type="checkbox"
+                                id="internet"
+                                {...register('internet', {
+                                required: 'Esse campo é obrigatório',
+                                valueAsBoolean: true, // Converts checkbox value to boolean
+                                })}
+                            />
+                            Possui acesso à internet?
+                            </label>
+                            {errors.internet && <p className="error">{errors.internet.message}</p>}
+
+                            <label htmlFor="computador">
+                            <input
+                                type="checkbox"
+                                id="computador"
+                                {...register('computador', {
+                                required: 'Esse campo é obrigatório',
+                                valueAsBoolean: true,
+                                })}
+                            />
+                            Possui computador em casa?
+                            </label>
+                            {errors.terms && <p className="error">{errors.terms.message}</p>}
+                        </div>       
+            
                     </div>
                 
                     <legend>Notas</legend>

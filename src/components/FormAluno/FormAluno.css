@@ -1,0 +1,190 @@
+@import url('https://fonts.googleapis.com/css2?family=ADLaM+Display&family=Afacad:ital,wght@0,400..700;1,400..700&family=Jura:wght@300..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    font-family: "ADLaM Display", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Layout Containers */
+.container {
+    width: 60vw;
+    margin: 0 auto;
+    padding: 20px 30px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 20px 8px rgba(0, 0, 0, 0.1);
+}
+
+.containers-wrapper {
+    display: flex;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.container-notas-freq,
+.container-frequency {
+    flex: 1;
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: left;
+}
+
+/* Form */
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Form Elements */
+input:is([type="text"], [type="email"], [type="number"], [type="date"]) {
+    background-color: rgb(226, 226, 226);
+    color: black;
+    border: none;
+    border-radius: 6px;
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+/* Labels & Legends */
+.form-group label,
+.legenda {
+    color: rgb(73, 73, 73);
+    font-size: 18px;
+    font-family: "Afacad", serif;
+}
+
+.legenda {
+    display: block;
+    padding-left: 10px;
+    margin-bottom: 1rem;
+    font-size: 28px;
+    color: #333;
+}
+
+/* Checkbox Styles */
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Notas Section */
+.notas {
+    display: flex;
+    gap: 1.5rem;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.notas input{
+    background-color: rgb(212, 212, 212);
+}
+
+.notas-box {
+    background-color: #e4e4e4;
+    width: 40%;
+    min-height: 180px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.notas-box .lista-bimestres {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Button Styles */
+.div-botao {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #218AD3;
+    font-size: 16px;
+    width: 34%;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+/* Validation & Errors */
+.error {
+    color: rgb(255, 0, 0);
+    font-size: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .container {
+        width: 80vw;
+    }
+    
+    .containers-wrapper {
+        flex-direction: column;
+    }
+    
+    .notas-box {
+        width: 100%;
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 95vw;
+        padding: 15px;
+    }
+    
+    .form-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .notas {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .notas-box {
+        width: 80%;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    button {
+        width: 50%;
+    }
+}
