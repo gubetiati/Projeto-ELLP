@@ -32,7 +32,6 @@ export default function Form() {
                 </section>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <legend>Dados do Aluno</legend>
                     <div className="form-row">
                         {/** Repetição reduzida com map */}
                         {[
@@ -48,6 +47,7 @@ export default function Form() {
                                 <input
                                     type={type}
                                     id={name}
+                                    className={errors[name] ? 'input-error' : ''}
                                     {...register(name, { required: `${label} é obrigatório(a)` })}
                                 />
                                 {errors[name] && <p className="error">{errors[name].message}</p>}
@@ -55,7 +55,6 @@ export default function Form() {
                         ))}
                     </div>
                     
-                    <legend>Endereço</legend>
                     <div className="form-row">
                     {[
                         { label: 'Rua', name: 'rua' },
@@ -71,6 +70,7 @@ export default function Form() {
                         <input
                             type="text"
                             id={name}
+                            className={errors[name] ? 'input-error' : ''}
                             {...register(name, required ? { required: `${label} é obrigatório(a)` } : {})}
                         />
                         {errors[name] && <p className="error">{errors[name].message}</p>}
@@ -78,7 +78,7 @@ export default function Form() {
                     ))}
                     </div>
                     
-                    <legend>Família</legend>
+
                     <div className="form-row">
                         {[
                             { label: 'Nome do responsável', name: 'nomeResponsavel' },
@@ -99,6 +99,7 @@ export default function Form() {
                                 <input
                                     type={type}
                                     id={name}
+                                    className={errors[name] ? 'input-error' : ''}
                                     {...register(name, {
                                         required: `${label} é obrigatório(a)`,
                                         ...(pattern && { pattern }),
