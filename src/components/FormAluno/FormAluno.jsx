@@ -67,7 +67,6 @@ export default function FormAluno() {
                         </div>     
                     </div>
                 
-                {/* In your JSX */}
                 <div className="containers-wrapper">
                     <div className='container-notas-freq'>
                         <legend className='legenda'>Notas</legend>
@@ -92,11 +91,10 @@ export default function FormAluno() {
                         </div>
                     </div>
 
-                    {/* Add your frequency container here */}
+
                     <div className='container-frequency'>
                     <legend className='legenda'>Frequência</legend>
                     
-                    {/* Ativo Checkbox */}
                     <div className="form-group">
                         <label htmlFor="ativo">
                             <input
@@ -122,7 +120,6 @@ export default function FormAluno() {
                             {errors.dataMatricula && <p className="error">{errors.dataMatricula.message}</p>}
                         </div>
 
-                        {/* Data de Encerramento */}
                         <div className="form-group">
                             <label>Data de Encerramento</label>
                             <input

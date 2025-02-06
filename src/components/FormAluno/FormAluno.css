@@ -94,7 +94,7 @@ input:is([type="text"], [type="email"], [type="number"], [type="date"]) {
 }
 
 .notas input{
-    background-color: rgb(212, 212, 212);
+    background-color: rgb(187, 187, 187);
 }
 
 .notas-box {
