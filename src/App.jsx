@@ -12,11 +12,8 @@ function App() {
       <SideBar />
       <div>
         <Routes>
-          {/* Redirecionar para o login ao acessar a raiz */}
           <Route path="/" element={<Navigate to="/login" />} />
-          {/* Rota para a página de login */}
           <Route path="/login" element={<LoginForm />} />
-          {/* Rota para a página de cadastro de famílias e alunos */}
           <Route path="/register" element={<Form />} />
           <Route path="/aluno" element={<FormAluno />} />
           <Route path="/familia" element={<FormFamilia />} />

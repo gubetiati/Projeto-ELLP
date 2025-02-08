@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
 import './ListaBimestre.css';
 
+// eslint-disable-next-line no-unused-vars
 export default function ListaBimestre({ titulo, label, value, itens, onChange }) {
     return (
         <div className="notas-box">
@@ -28,7 +30,6 @@ export default function ListaBimestre({ titulo, label, value, itens, onChange })
                 </div>
                 
             </div>
-            {/* <button className='botao'>Adicionar</button> */}
         </div>
     );
 }

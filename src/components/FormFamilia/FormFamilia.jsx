@@ -1,24 +1,14 @@
+/* eslint-disable no-unused-vars */
 import { useForm } from 'react-hook-form';
 import './FormFamilia.css';
-import ListaBimestre from '../ListaBimestre/ListaBimestre';
 
 export default function FormFamilia() {
     const { register, handleSubmit, formState: { errors, isSubmitting }, watch, setValue } = useForm();
 
-    const bimestre = ['2024/4', '2025/1', '2025/2', '2025/3', '2025/4'];
-    const notaAntiga = watch('notaAntiga', bimestre[0]);
-    const notaNova = watch('notaNova', bimestre[0]);
-
     const onSubmit = async (data) => {
         console.log(data);
-        // Mensagem de sucesso integrada à UI
         alert('Dados salvos com sucesso!');
     };
-
-    const handleBimestreChange = (field, value) => {
-        setValue(field, value);
-    }
-
 
     return (
         <>
