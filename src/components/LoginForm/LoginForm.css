@@ -76,3 +76,33 @@ input[type="password"]::-webkit-contacts-auto-fill-button {
       padding: 20px;
   }
 }
+
+.form-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.tab-button.active {
+  color: #3578E5;
+  border-bottom: 2px solid #3578E5;
+}
+
+.tab-button:hover {
+  color: #3578E5;
+}
+
+.form {
+  padding-top: 0;
+}
