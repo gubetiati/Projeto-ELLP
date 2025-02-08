@@ -19,14 +19,13 @@ const LoginForm = () => {
       if (activeTab === 'login') {
         await login(data);
         navigate('/dashboard');
-      } else if (activeTab === 'cadastro') {  // Aqui vai o if que faltava
+      } else if (activeTab === 'cadastro') {
         await registerColaborador({
           ...data,
           role: "ADMIN"
         });
-        // Após cadastro bem sucedido, você pode:
         alert('Cadastro realizado com sucesso!');
-        setActiveTab('login'); // Volta para a aba de login
+        setActiveTab('login');
       }
     } catch (error) {
       setError('root', {
