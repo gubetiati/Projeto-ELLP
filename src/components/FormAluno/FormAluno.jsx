@@ -11,14 +11,8 @@ export default function FormAluno() {
 
     const onSubmit = async (data) => {
         console.log(data);
-        // Mensagem de sucesso integrada à UI
         alert('Dados salvos com sucesso!');
     };
-
-    const handleBimestreChange = (field, value) => {
-        setValue(field, value);
-    }
-
 
     return (
         <>
@@ -33,7 +27,6 @@ export default function FormAluno() {
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-row">
-                        {/** Repetição reduzida com map */}
                         {[
                             { label: 'Nome Completo', name: 'nomeCompleto' },
                             { label: 'Série', name: 'serie' },
@@ -108,7 +101,6 @@ export default function FormAluno() {
                         </label>
                     </div>
 
-                        {/* Data de Matrícula */}
                         <div className="form-group">
                             <label>Data de Matrícula</label>
                             <input

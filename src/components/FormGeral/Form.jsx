@@ -11,14 +11,8 @@ export default function Form() {
 
     const onSubmit = async (data) => {
         console.log(data);
-        // Mensagem de sucesso integrada à UI
         alert('Dados salvos com sucesso!');
     };
-
-    const handleBimestreChange = (field, value) => {
-        setValue(field, value);
-    }
-
 
     return (
         <>
@@ -33,7 +27,6 @@ export default function Form() {
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-row">
-                        {/** Repetição reduzida com map */}
                         {[
                             { label: 'Nome', name: 'nome' },
                             { label: 'Sobrenome', name: 'sobrenome' },
@@ -116,7 +109,7 @@ export default function Form() {
                                 id="internet"
                                 {...register('internet', {
                                 required: 'Esse campo é obrigatório',
-                                valueAsBoolean: true, // Converts checkbox value to boolean
+                                valueAsBoolean: true,
                                 })}
                             />
                             Possui acesso à internet?
@@ -141,7 +134,6 @@ export default function Form() {
                 
                     <legend>Notas</legend>
                     <div className="notas">
-                            {/* ListaBimestre para Nota Antiga */}
                             <ListaBimestre
                                 titulo="Nota Antiga"
                                 label="Bimestre:"
@@ -154,7 +146,6 @@ export default function Form() {
                                 {...register('notaAntiga')}
                             />
 
-                            {/* ListaBimestre para Nota Nova */}
                             <ListaBimestre
                                 titulo="Nota Nova"
                                 label="Bimestre:"
