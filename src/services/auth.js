@@ -9,13 +9,11 @@ export const login = async (credentials) => {
 };
 
 export const registerColaborador = async (colaboradorData) => {
-  return api.post('/register/colaborador', {
-    ...colaboradorData,
-    role: "ADMIN"
-  });
+  const response = await api.post('/register/colaborador', colaboradorData);
+  return response.data;
 };
 
 export const registerUser = async (userData) => {
-    return api.post('/register/user', userData);
-  };
-  
+  const response = await api.post('/register/user', userData);
+  return response.data;
+};
