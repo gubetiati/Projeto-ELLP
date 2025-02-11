@@ -8,17 +8,42 @@ export default function SideBar() {
         { 
             icon: 'src/assets/icons/busca.svg', 
             alt: 'Busca',
-            path: '/search' 
-        },
-        { 
-            icon: 'src/assets/icons/cadastro.svg', 
-            alt: 'Cadastro',
-            path: '/register' 
+            path: '/busca' 
         },
         { 
             icon: 'src/assets/icons/alunos.svg', 
             alt: 'Alunos',
             path: '/aluno' 
+        },
+        { 
+            icon: 'src/assets/icons/familia.svg', 
+            alt: 'Família',
+            path: '/familia' 
+        },
+        { 
+            icon: 'src/assets/icons/escola.svg', 
+            alt: 'Escola',
+            path: '/escola' 
+        },
+        { 
+            icon: 'src/assets/icons/bairro.svg', 
+            alt: 'Bairro',
+            path: '/bairro' 
+        },
+        { 
+            icon: 'src/assets/icons/disciplina.svg', 
+            alt: 'Disciplina',
+            path: '/disciplina' 
+          },
+        {
+            icon: 'src/assets/icons/notas.svg',
+            alt: 'Lançar Notas',
+            path: '/notas'
+        },
+        {
+            icon: 'src/assets/icons/relatorios.svg',
+            alt: 'Relatórios',
+            path: '/relatorios'
         },
         { 
             icon: 'src/assets/icons/home.svg', 
@@ -34,22 +59,24 @@ export default function SideBar() {
                     <img 
                         src="src/assets/icons/ellpinho.png" 
                         alt="Logo da Página" 
+                        className="logo-img"
                     />
                 </Link>
             </div>
 
-            <ul>
+            <ul className="sidebar-menu">
                 {menuItems.map((item, index) => (
                     <li
                         key={index}
                         className={location.pathname === item.path ? 'active' : ''}
                     >
-                        <Link to={item.path}>
+                        <Link to={item.path} title={item.alt}>
                             <img 
                                 src={item.icon} 
                                 alt={item.alt} 
                                 className="sidebar-icon"
                             />
+                            <span className="tooltip">{item.alt}</span>
                         </Link>
                     </li>
                 ))}
