@@ -1,13 +1,35 @@
-/* eslint-disable no-unused-vars */
 import { useForm } from 'react-hook-form';
 import './FormFamilia.css';
+import { familiaService } from '../../services/familia';
 
 export default function FormFamilia() {
-    const { register, handleSubmit, formState: { errors, isSubmitting }, watch, setValue } = useForm();
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+        defaultValues: {
+            grupoFamiliar: 0,
+            pessoasEmpregadas: 0,
+            renda: 0,
+            acessoInternet: false,
+            possuiComputador: false,
+            casaPropria: false,
+            possuiCarro: false
+        }
+    });
 
     const onSubmit = async (data) => {
-        console.log(data);
-        alert('Dados salvos com sucesso!');
+        try {
+            const formattedData = {
+                ...data,
+                grupoFamiliar: Number(data.grupoFamiliar),
+                pessoasEmpregadas: Number(data.pessoasEmpregadas),
+                renda: Number(data.renda)
+            };
+
+            await familiaService.create(formattedData);
+            alert('Família cadastrada com sucesso!');
+        } catch (error) {
+            console.error('Erro ao cadastrar família:', error);
+            alert('Erro ao cadastrar família. Por favor, tente novamente.');
+        }
     };
 
     return (
@@ -18,147 +40,117 @@ export default function FormFamilia() {
 
             <main className="container">
                 <section className="titulo">
-                    <h2>Familia:</h2>
+                    <h2>Família:</h2>
                 </section>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-row">
-                        {/** Repetição reduzida com map */}
-                        {[
-                            { label: 'Nome do responsável', name: 'nomeResponsavel' },
-                            { label: 'Endereço', name: 'endereco' },
-                            { label: 'Nº de pessoas na família', name: 'numeroPessoas', type: 'number'},
-                            
-                        ].map(({ label, name, type = 'text' }) => (
-                            <div className="form-group" key={name} style={{gridColumn: '1'}}>
-                                <label htmlFor={name}>{label}</label>
+                        <div className="form-numeric-fields">
+                            <div className="form-group">
+                                <label htmlFor="grupoFamiliar">Número de pessoas no grupo familiar</label>
                                 <input
-                                    type={type}
-                                    id={name}
-                                    {...register(name, { required: `${label} é obrigatório(a)` })}
+                                    type="number"
+                                    id="grupoFamiliar"
+                                    min="0"
+                                    {...register('grupoFamiliar', { 
+                                        required: 'Este campo é obrigatório',
+                                        min: {
+                                            value: 0,
+                                            message: 'O valor deve ser maior ou igual a 0'
+                                        }
+                                    })}
                                 />
-                                {errors[name] && <p className="error">{errors[name].message}</p>}
+                                {errors.grupoFamiliar && <p className="error">{errors.grupoFamiliar.message}</p>}
                             </div>
-                        ))}
 
-                        {[
-                            { label: 'Número', name: 'numero' },
-                            { label: 'Bairro', name: 'bairro' },
-                            { label: 'Telefone', name: 'telefone' },
-                            { label: 'Escolaridade do pai', name: 'escolaridadePai' },
-                            { label: 'Emprego Pai', name: 'empregoPai' },
-                            { label: 'Quantos filhos há na família', name: 'numeroFilhos', type: 'number' },
-                            { label: 'Renda aproximada da família', name: 'rendaFamilia' },
-
-                        ].map(({ label, name, type = 'text' }) => (
-                            <div className="form-group" key={name} style={{gridColumn: '2'}}>
-                                <label htmlFor={name}>{label}</label>
+                            <div className="form-group">
+                                <label htmlFor="pessoasEmpregadas">Número de pessoas empregadas</label>
                                 <input
-                                    type={type}
-                                    id={name}
-                                    {...register(name, { required: `${label} é obrigatório(a)` })}
+                                    type="number"
+                                    id="pessoasEmpregadas"
+                                    min="0"
+                                    {...register('pessoasEmpregadas', { 
+                                        required: 'Este campo é obrigatório',
+                                        min: {
+                                            value: 0,
+                                            message: 'O valor deve ser maior ou igual a 0'
+                                        }
+                                    })}
                                 />
-                                {errors[name] && <p className="error">{errors[name].message}</p>}
+                                {errors.pessoasEmpregadas && <p className="error">{errors.pessoasEmpregadas.message}</p>}
                             </div>
-                        ))}
 
-                        {[
-                            { label: 'Complemento', name: 'complemento' },
-                            { label: 'Celular/Whatsapp', name: 'celular' },
-                            { label: 'Escolaridade da mãe', name: 'escolaridadeMae' },
-                            { label: 'Emprego da Mãe', name: 'empregoMae' },
-                            { label: 'Nº de pessoas empregadas na família', name: 'pessoasEmpregadas', type: 'number' },
-
-
-                        ].map(({ label, name, type = 'text' }) => (
-                            <div className="form-group" key={name} style={{gridColumn: '3'}}>
-                                <label htmlFor={name}>{label}</label>
+                            <div className="form-group">
+                                <label htmlFor="renda">Renda familiar total</label>
                                 <input
-                                    type={type}
-                                    id={name}
-                                    {...register(name, { required: `${label} é obrigatório(a)` })}
+                                    type="number"
+                                    id="renda"
+                                    min="0"
+                                    step="0.01"
+                                    {...register('renda', { 
+                                        required: 'Este campo é obrigatório',
+                                        min: {
+                                            value: 0,
+                                            message: 'O valor deve ser maior ou igual a 0'
+                                        }
+                                    })}
                                 />
-                                {errors[name] && <p className="error">{errors[name].message}</p>}
+                                {errors.renda && <p className="error">{errors.renda.message}</p>}
                             </div>
-                        ))}
+                        </div>
 
-                        <div className="form-group checkbox-container">
-                            <label htmlFor="transporte">
-                                <input
-                                    type="checkbox"
-                                    id="transporte"
-                                    {...register('transporte', {
-                                        valueAsBoolean: false,
-                                    })}
-                                />
-                                Necessita de transporte?
-                            </label>
-                            {errors.transporte && <p className="error">{errors.transporte.message}</p>}
-                        </div>   
+                        <div className="form-checkbox-fields">
+                            <div className="form-group checkbox-container">
+                                <label htmlFor="acessoInternet">
+                                    <input
+                                        type="checkbox"
+                                        id="acessoInternet"
+                                        {...register('acessoInternet')}
+                                    />
+                                    Acesso à internet em casa
+                                </label>
+                            </div>
 
-                        <div className="form-group checkbox-container">
-                            <label htmlFor="internet">
-                                <input
-                                    type="checkbox"
-                                    id="internet"
-                                    {...register('internet', {
-                                        valueAsBoolean: false,
-                                    })}
-                                />
-                                Acesso à internet em casa?
-                            </label>
-                            {errors.internet && <p className="error">{errors.internet.message}</p>}
-                        </div>   
+                            <div className="form-group checkbox-container">
+                                <label htmlFor="possuiComputador">
+                                    <input
+                                        type="checkbox"
+                                        id="possuiComputador"
+                                        {...register('possuiComputador')}
+                                    />
+                                    Possui computador em casa
+                                </label>
+                            </div>
 
-                        <div className="form-group checkbox-container">
-                            <label htmlFor="possuiComputador">
-                                <input
-                                    type="checkbox"
-                                    id="possuiComputador"
-                                    {...register('possuiComputador', {
-                                        valueAsBoolean: false,
-                                    })}
-                                />
-                                Possui computador em casa?
-                            </label>
-                            {errors.possuiComputador && <p className="error">{errors.possuiComputador.message}</p>}
-                        </div> 
+                            <div className="form-group checkbox-container">
+                                <label htmlFor="casaPropria">
+                                    <input
+                                        type="checkbox"
+                                        id="casaPropria"
+                                        {...register('casaPropria')}
+                                    />
+                                    Possui casa própria
+                                </label>
+                            </div>
 
-                        <div className="form-group checkbox-container">
-                            <label htmlFor="carroProprio">
-                                <input
-                                    type="checkbox"
-                                    id="carroProprio"
-                                    {...register('carroProprio', {
-                                        valueAsBoolean: false,
-                                    })}
-                                />
-                                Família possui carro próprio?
-                            </label>
-                            {errors.carroProprio && <p className="error">{errors.carroProprio.message}</p>}
-                        </div> 
-
-                        <div className="form-group checkbox-container">
-                            <label htmlFor="casaPropria">
-                                <input
-                                    type="checkbox"
-                                    id="casaPropria"
-                                    {...register('casaPropria', {
-                                        valueAsBoolean: false,
-                                    })}
-                                />
-                                Família possui casa própria?
-                            </label>
-                            {errors.casaPropria && <p className="error">{errors.casaPropria.message}</p>}
-                        </div> 
+                            <div className="form-group checkbox-container">
+                                <label htmlFor="possuiCarro">
+                                    <input
+                                        type="checkbox"
+                                        id="possuiCarro"
+                                        {...register('possuiCarro')}
+                                    />
+                                    Possui carro próprio
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                
-                <div className="div-botao">
+
+                    <div className="div-botao">
                         <button type="submit" disabled={isSubmitting}>
                             {isSubmitting ? 'Salvando...' : 'Salvar'}
                         </button>
                     </div>
-                    
                 </form>
             </main>
         </>
