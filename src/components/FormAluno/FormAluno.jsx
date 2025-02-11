@@ -1,135 +1,205 @@
 import { useForm } from 'react-hook-form';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './FormAluno.css';
-import ListaBimestre from '../ListaBimestre/ListaBimestre';
+import { alunoService } from '../../services/aluno';
+import { useState, useEffect } from 'react';
+import { familiaService } from '../../services/familia';
 
 export default function FormAluno() {
-    const { register, handleSubmit, formState: { errors, isSubmitting }, watch, setValue } = useForm();
+    const [familias, setFamilias] = useState([]);
 
-    const bimestre = ['2024/4', '2025/1', '2025/2', '2025/3', '2025/4'];
-    const notaAntiga = watch('notaAntiga', bimestre[0]);
-    const notaNova = watch('notaNova', bimestre[0]);
+    const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
+        defaultValues: {
+            nome: '',
+            bairro: '',
+            rua: '',
+            numero: '',
+            serie: '',
+            dataNascimento: '',
+            necessitaTransporte: false,
+            recebeAtendimentoMedico: false,
+            familiaId: ''
+        }
+    });
+
+    useEffect(() => {
+        const carregarFamilias = async () => {
+            try {
+                const response = await familiaService.getAll();
+                setFamilias(response);
+            } catch (error) {
+                toast.error('Erro ao carregar famílias');
+                console.error('Erro ao carregar famílias:', error);
+            }
+        };
+
+        carregarFamilias();
+    }, []);
 
     const onSubmit = async (data) => {
-        console.log(data);
-        alert('Dados salvos com sucesso!');
+        try {
+            const loadingToast = toast.loading("Salvando dados...");
+            
+            const formattedData = {
+                nome: data.nome,
+                bairro: data.bairro,
+                rua: data.rua,
+                numero: parseInt(data.numero),
+                serie: data.serie,
+                dataNascimento: new Date(data.dataNascimento).toISOString(),
+                necessitaTransporte: data.necessitaTransporte,
+                recebeAtendimentoMedico: data.recebeAtendimentoMedico,
+                familia: {
+                    id: data.familiaId
+                }
+            };
+
+            await alunoService.create(formattedData);
+            
+            toast.update(loadingToast, {
+                render: "Aluno cadastrado com sucesso!",
+                type: "success",
+                isLoading: false,
+                autoClose: 3000
+            });
+
+            reset();
+        } catch (error) {
+            toast.error('Erro ao cadastrar aluno. Por favor, tente novamente.');
+            console.error('Erro ao cadastrar aluno:', error);
+        }
     };
 
     return (
         <>
+            <ToastContainer />
             <header className="header">
-                <h2>Cadastro de aluno</h2>
+                <h2>Cadastro de Aluno</h2>
             </header>
 
             <main className="container">
-                <section className="titulo">
-                    <h2>Aluno:</h2>
-                </section>
-
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="form-row">
-                        {[
-                            { label: 'Nome Completo', name: 'nomeCompleto' },
-                            { label: 'Série', name: 'serie' },
-                            { label: 'Data de nascimento', name: 'dataNascimento', type: 'date' },
-                            { label: 'Escola', name: 'escola' },
-
-                        ].map(({ label, name, type = 'text' }) => (
-                            <div className="form-group" key={name}>
-                                <label htmlFor={name}>{label}</label>
+                <form onSubmit={handleSubmit(onSubmit)} className="form-aluno">
+                    <div className="form-section">
+                        <h3>Dados Pessoais</h3>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="nome">Nome Completo</label>
                                 <input
-                                    type={type}
-                                    id={name}
-                                    {...register(name, { required: `${label} é obrigatório(a)` })}
+                                    type="text"
+                                    id="nome"
+                                    {...register('nome', { required: 'Nome é obrigatório' })}
                                 />
-                                {errors[name] && <p className="error">{errors[name].message}</p>}
+                                {errors.nome && <span className="error">{errors.nome.message}</span>}
                             </div>
-                        ))}
 
-                        <div className="form-group checkbox-container">
-                            <label htmlFor="atendimento">
+                            <div className="form-group">
+                                <label htmlFor="dataNascimento">Data de Nascimento</label>
                                 <input
-                                    type="checkbox"
-                                    id="atendimento"
-                                    {...register('atendimento', {
-                                        valueAsBoolean: false,
-                                    })}
+                                    type="date"
+                                    id="dataNascimento"
+                                    {...register('dataNascimento', { required: 'Data de nascimento é obrigatória' })}
                                 />
-                                O aluno recebe atendimento médico/clínico?
-                            </label>
-                            {errors.atendimento && <p className="error">{errors.atendimento.message}</p>}
-                        </div>     
-                    </div>
-                
-                <div className="containers-wrapper">
-                    <div className='container-notas-freq'>
-                        <legend className='legenda'>Notas</legend>
-                        <div className="notas">
-                            <ListaBimestre
-                                titulo="Nota Antiga"
-                                label="Bimestre:"
-                                value={notaAntiga}
-                                itens={bimestre}
-                                onChange={(value) => setValue('notaAntiga', value)}
-                            />
-                            <input type="hidden" {...register('notaAntiga')} />
-                            
-                            <ListaBimestre
-                                titulo="Nota Nova"
-                                label="Bimestre:"
-                                value={notaNova}
-                                itens={bimestre}
-                                onChange={(value) => setValue('notaNova', value)}
-                            />
-                            <input type="hidden" {...register('notaNova')} />
+                                {errors.dataNascimento && <span className="error">{errors.dataNascimento.message}</span>}
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="serie">Série</label>
+                                <input
+                                    type="text"
+                                    id="serie"
+                                    {...register('serie', { required: 'Série é obrigatória' })}
+                                />
+                                {errors.serie && <span className="error">{errors.serie.message}</span>}
+                            </div>
                         </div>
                     </div>
 
+                    <div className="form-section">
+                        <h3>Endereço</h3>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="rua">Rua</label>
+                                <input
+                                    type="text"
+                                    id="rua"
+                                    {...register('rua', { required: 'Rua é obrigatória' })}
+                                />
+                                {errors.rua && <span className="error">{errors.rua.message}</span>}
+                            </div>
 
-                    <div className='container-frequency'>
-                    <legend className='legenda'>Frequência</legend>
-                    
-                    <div className="form-group">
-                        <label htmlFor="ativo">
-                            <input
-                                type="checkbox"
-                                id="ativo"
-                                {...register('ativo', {
-                                    valueAsBoolean: false
-                                })}
-                            />
-                            Ativo:
-                        </label>
+                            <div className="form-group">
+                                <label htmlFor="numero">Número</label>
+                                <input
+                                    type="number"
+                                    id="numero"
+                                    {...register('numero', { required: 'Número é obrigatório' })}
+                                />
+                                {errors.numero && <span className="error">{errors.numero.message}</span>}
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="bairro">Bairro</label>
+                                <input
+                                    type="text"
+                                    id="bairro"
+                                    {...register('bairro', { required: 'Bairro é obrigatório' })}
+                                />
+                                {errors.bairro && <span className="error">{errors.bairro.message}</span>}
+                            </div>
+                        </div>
                     </div>
+
+                    <div className="form-section">
+                        <h3>Informações Adicionais</h3>
+                        <div className="form-row checkbox-row">
+                            <div className="form-group checkbox-group">
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        {...register('necessitaTransporte')}
+                                    />
+                                    Necessita de Transporte
+                                </label>
+                            </div>
+
+                            <div className="form-group checkbox-group">
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        {...register('recebeAtendimentoMedico')}
+                                    />
+                                    Recebe Atendimento Médico
+                                </label>
+                            </div>
+                        </div>
 
                         <div className="form-group">
-                            <label>Data de Matrícula</label>
-                            <input
-                                type="date"
-                                {...register('dataMatricula', {
-                                    required: 'Data de matrícula é obrigatória'
-                                })}
-                            />
-                            {errors.dataMatricula && <p className="error">{errors.dataMatricula.message}</p>}
-                        </div>
-
-                        <div className="form-group">
-                            <label>Data de Encerramento</label>
-                            <input
-                                type="date"
-                                {...register('dataEncerramento', {
-                                    required: 'Data de encerramento é obrigatória'
-                                })}
-                            />
-                            {errors.dataEncerramento && <p className="error">{errors.dataEncerramento.message}</p>}
+                            <label htmlFor="familiaId">Família</label>
+                            <select
+                                id="familiaId"
+                                {...register('familiaId', { required: 'Família é obrigatória' })}
+                            >
+                                <option value="">Selecione uma família</option>
+                                {familias.map((familia) => (
+                                    <option key={familia.id} value={familia.id}>
+                                        Família {familia.grupoFamiliar} - Renda: R$ {familia.renda}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.familiaId && <span className="error">{errors.familiaId.message}</span>}
                         </div>
                     </div>
-                </div>
-                <div className="div-botao">
-                        <button type="submit" disabled={isSubmitting}>
+
+                    <div className="div-botao">
+                        <button 
+                            type="submit" 
+                            disabled={isSubmitting}
+                            className={isSubmitting ? 'loading' : ''}
+                        >
                             {isSubmitting ? 'Salvando...' : 'Salvar'}
                         </button>
                     </div>
-                    
                 </form>
             </main>
         </>
