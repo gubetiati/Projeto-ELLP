@@ -9,8 +9,12 @@ import './LancamentoNotas.css';
 const LancamentoNotas = () => {
     const [alunos, setAlunos] = useState([]);
     const [disciplinas, setDisciplinas] = useState([]);
-    const [notasAnteriores, setNotasAnteriores] = useState(null);
-    const [carregando, setCarregando] = useState(true);
+    const [todasNotas, setTodasNotas] = useState([]);
+    const [carregando, setCarregando] = useState({
+        alunos: true,
+        disciplinas: true,
+        notas: true
+    });
     
     const { 
         register, 
@@ -32,90 +36,122 @@ const LancamentoNotas = () => {
     const alunoSelecionado = watch('alunoId');
     const disciplinaSelecionada = watch('disciplinaId');
 
+    // Carrega os dados separadamente para melhor tratamento de erro
     useEffect(() => {
-        const carregarDados = async () => {
+        const carregarAlunos = async () => {
             try {
-                setCarregando(true);
-                
-                const [alunosData, disciplinasData] = await Promise.all([
-                    alunoService.getAll(),
-                    disciplinaService.getAll()
-                ]);
-    
-                setAlunos(alunosData);
-                setDisciplinas(disciplinasData);
-    
-                if (disciplinasData.length === 0) {
-                    toast.warning('Nenhuma disciplina encontrada');
-                }
+                const response = await alunoService.getAll();
+                setAlunos(response);
             } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                
-                const errorMessage = error.response?.data?.message 
-                    || 'Erro ao carregar dados. Tente novamente.';
-                
-                toast.error(errorMessage);
+                console.error('Erro ao carregar alunos:', error);
+                toast.error('Erro ao carregar lista de alunos');
             } finally {
-                setCarregando(false);
+                setCarregando(prev => ({ ...prev, alunos: false }));
             }
         };
-    
-        carregarDados();
+
+        const carregarDisciplinas = async () => {
+            try {
+                const response = await disciplinaService.getAll();
+                setDisciplinas(response);
+            } catch (error) {
+                console.error('Erro ao carregar disciplinas:', error);
+                toast.error('Erro ao carregar disciplinas. O serviço pode estar indisponível.');
+                // Disciplinas provisórias para teste
+                setDisciplinas([
+                    { id: '1', nome: 'Matemática' },
+                    { id: '2', nome: 'Português' },
+                    { id: '3', nome: 'Ciências' }
+                ]);
+            } finally {
+                setCarregando(prev => ({ ...prev, disciplinas: false }));
+            }
+        };
+
+        const carregarNotas = async () => {
+            try {
+                const response = await notaService.getAll();
+                setTodasNotas(response);
+            } catch (error) {
+                console.error('Erro ao carregar notas:', error);
+                toast.error('Erro ao carregar histórico de notas');
+            } finally {
+                setCarregando(prev => ({ ...prev, notas: false }));
+            }
+        };
+
+        carregarAlunos();
+        carregarDisciplinas();
+        carregarNotas();
     }, []);
 
-    useEffect(() => {
-        const buscarNotasAnteriores = async () => {
-            if (alunoSelecionado && disciplinaSelecionada) {
-                try {
-                    const historico = await notaService.getHistoricoPorAluno(
-                        alunoSelecionado, 
-                        disciplinaSelecionada
-                    );
-                    setNotasAnteriores(historico);
-                } catch (error) {
-                    console.error('Erro ao buscar histórico:', error);
-                    toast.error('Não foi possível carregar o histórico de notas');
-                    setNotasAnteriores(null);
-                }
-            }
-        };
-
-        buscarNotasAnteriores();
-    }, [alunoSelecionado, disciplinaSelecionada]);
+    const getNotasAnteriores = () => {
+        if (!alunoSelecionado || !disciplinaSelecionada) return [];
+        
+        return todasNotas.filter(nota => 
+            nota.alunoId === alunoSelecionado && 
+            nota.disciplinaId === disciplinaSelecionada
+        ).sort((a, b) => b.ano - a.ano);
+    };
 
     const onSubmit = async (data) => {
         try {
             const notaData = {
                 alunoId: data.alunoId,
                 disciplinaId: data.disciplinaId,
-                primeiroBimestre: parseFloat(data.primeiroBimestre) || 0,
-                segundoBimestre: parseFloat(data.segundoBimestre) || 0,
-                terceiroBimestre: parseFloat(data.terceiroBimestre) || 0,
-                quartoBimestre: parseFloat(data.quartoBimestre) || 0,
-                ano: new Date().getFullYear()
+                primeiroBimestre: parseFloat(data.primeiroBimestre || 0),
+                segundoBimestre: parseFloat(data.segundoBimestre || 0),
+                terceiroBimestre: parseFloat(data.terceiroBimestre || 0),
+                quartoBimestre: parseFloat(data.quartoBimestre || 0),
+                ano: 2025 // Ano fixo para teste
             };
-
-            await notaService.create(notaData);
+    
+            console.log('Enviando dados:', {
+                dados: notaData,
+                validacoes: {
+                    alunoExiste: Boolean(notaData.alunoId),
+                    disciplinaExiste: Boolean(notaData.disciplinaId),
+                    notasValidas: !isNaN(notaData.primeiroBimestre) &&
+                                 !isNaN(notaData.segundoBimestre) &&
+                                 !isNaN(notaData.terceiroBimestre) &&
+                                 !isNaN(notaData.quartoBimestre)
+                }
+            });
+    
+            const response = await notaService.create(notaData);
+            console.log('Nota criada:', response);
+            
             toast.success('Notas cadastradas com sucesso!');
             reset();
-            setNotasAnteriores(null);
+            
+            const notasAtualizadas = await notaService.getAll();
+            setTodasNotas(notasAtualizadas);
         } catch (error) {
-            console.error('Erro ao cadastrar notas:', error);
-            toast.error('Não foi possível salvar as notas');
+            console.error('Erro ao criar nota:', {
+                mensagem: error.message,
+                resposta: error.response?.data,
+                status: error.response?.status
+            });
+            
+            const mensagemErro = error.response?.data?.message 
+                || 'Erro ao cadastrar notas. Verifique os dados e tente novamente.';
+            
+            toast.error(mensagemErro);
         }
     };
-
-    if (carregando) {
-        return <div className="loading">Carregando...</div>;
+    if (carregando.alunos) {
+        return <div className="loading">Carregando alunos...</div>;
     }
+
+    const notasAnteriores = getNotasAnteriores();
 
     return (
         <div className="lancamento-notas-container">
+
+            <main className="container">
             <header className="header">
                 <h2>Lançamento de Notas</h2>
             </header>
-
-            <main className="container">
                 <form onSubmit={handleSubmit(onSubmit)} className="form-notas">
                     <div className="form-section">
                         <div className="form-group">
@@ -147,8 +183,13 @@ const LancamentoNotas = () => {
                                 {...register('disciplinaId', { 
                                     required: 'Selecione uma disciplina'
                                 })}
+                                disabled={carregando.disciplinas}
                             >
-                                <option value="">Selecione uma disciplina</option>
+                                <option value="">
+                                    {carregando.disciplinas 
+                                        ? 'Carregando disciplinas...' 
+                                        : 'Selecione uma disciplina'}
+                                </option>
                                 {disciplinas.map(disciplina => (
                                     <option key={disciplina.id} value={disciplina.id}>
                                         {disciplina.nome}
@@ -163,7 +204,7 @@ const LancamentoNotas = () => {
                         </div>
                     </div>
 
-                    {notasAnteriores && notasAnteriores.length > 0 && (
+                    {notasAnteriores.length > 0 && (
                         <div className="historico-notas">
                             <h3>Histórico de Notas Anteriores</h3>
                             <table>
@@ -174,25 +215,36 @@ const LancamentoNotas = () => {
                                         <th>2º Bimestre</th>
                                         <th>3º Bimestre</th>
                                         <th>4º Bimestre</th>
+                                        <th>Média</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {notasAnteriores.map((nota, index) => (
-                                        <tr key={index}>
-                                            <td>{nota.ano}</td>
-                                            <td>{nota.primeiroBimestre?.toFixed(1) || 'N/A'}</td>
-                                            <td>{nota.segundoBimestre?.toFixed(1) || 'N/A'}</td>
-                                            <td>{nota.terceiroBimestre?.toFixed(1) || 'N/A'}</td>
-                                            <td>{nota.quartoBimestre?.toFixed(1) || 'N/A'}</td>
-                                        </tr>
-                                    ))}
+                                    {notasAnteriores.map((nota, index) => {
+                                        const media = (
+                                            (nota.primeiroBimestre || 0) +
+                                            (nota.segundoBimestre || 0) +
+                                            (nota.terceiroBimestre || 0) +
+                                            (nota.quartoBimestre || 0)
+                                        ) / 4;
+                                        
+                                        return (
+                                            <tr key={index}>
+                                                <td>{nota.ano}</td>
+                                                <td>{nota.primeiroBimestre?.toFixed(1) || 'N/A'}</td>
+                                                <td>{nota.segundoBimestre?.toFixed(1) || 'N/A'}</td>
+                                                <td>{nota.terceiroBimestre?.toFixed(1) || 'N/A'}</td>
+                                                <td>{nota.quartoBimestre?.toFixed(1) || 'N/A'}</td>
+                                                <td>{media.toFixed(1)}</td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         </div>
                     )}
 
                     <div className="form-section notas-bimestre">
-                        <h3>Notas por Bimestre</h3>
+                        <h3>Novas Notas</h3>
                         <div className="notas-grid">
                             {['primeiro', 'segundo', 'terceiro', 'quarto'].map((bimestre, index) => (
                                 <div className="form-group" key={bimestre}>
@@ -225,8 +277,9 @@ const LancamentoNotas = () => {
                         <button 
                             type="submit" 
                             className="btn-salvar-notas"
+                            disabled={carregando.disciplinas}
                         >
-                            Salvar Notas
+                            {carregando.disciplinas ? 'Carregando...' : 'Salvar Notas'}
                         </button>
                     </div>
                 </form>
