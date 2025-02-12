@@ -70,7 +70,7 @@ export default function SideBar() {
                         key={index}
                         className={location.pathname === item.path ? 'active' : ''}
                     >
-                        <Link to={item.path} title={item.alt}>
+                        <Link to={item.path}>
                             <img 
                                 src={item.icon} 
                                 alt={item.alt} 
