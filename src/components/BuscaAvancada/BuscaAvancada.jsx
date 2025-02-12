@@ -116,8 +116,8 @@ const BuscaAvancada = () => {
               resultados.map(aluno => (
                 <div key={aluno.id} className="card-aluno">
                   <h3>{aluno.nome}</h3>
-                  <p>Idade: {aluno.idade}</p>
-                  <p>Escola: {aluno.escola}</p>
+                  <p>Idade: {aluno.idade || 'N/A'}</p>
+                  <p>Escola: {aluno.escola?.nome || 'N/A'}</p>
                   <p>Média: {aluno.mediaGeral || 'N/A'}</p>
                   <button 
                     onClick={() => navigate(`/aluno/${aluno.id}`)}
