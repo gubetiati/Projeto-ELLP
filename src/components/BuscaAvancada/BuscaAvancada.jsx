@@ -17,17 +17,76 @@ const BuscaAvancada = () => {
 
   const [resultados, setResultados] = useState([]);
 
+  const filtrarResultados = (alunos, criterios) => {
+    return alunos.filter(aluno => {
+      // Filtro por nome
+      if (criterios.nome && !aluno.nome?.toLowerCase().includes(criterios.nome.toLowerCase())) {
+        return false;
+      }
+
+      // Filtro por idade
+      if (criterios.idade) {
+        const idadeAluno = aluno.idade || 
+          (aluno.dataNascimento ? 
+            new Date().getFullYear() - new Date(aluno.dataNascimento).getFullYear() 
+            : null);
+        if (idadeAluno !== Number(criterios.idade)) {
+          return false;
+        }
+      }
+
+      // Filtro por escola
+      if (criterios.escola && !aluno.escola?.nome?.toLowerCase().includes(criterios.escola.toLowerCase())) {
+        return false;
+      }
+
+      // Filtro por renda
+      if (aluno.familia) {
+        if (criterios.rendaMinima && aluno.familia.renda < Number(criterios.rendaMinima)) {
+          return false;
+        }
+        if (criterios.rendaMaxima && aluno.familia.renda > Number(criterios.rendaMaxima)) {
+          return false;
+        }
+      }
+
+      // Filtro por média mínima
+      if (criterios.mediaMinima && aluno.notas) {
+        const mediaGeral = aluno.notas.reduce((acc, nota) => {
+          const mediaNota = [
+            nota.primeiroBimestre,
+            nota.segundoBimestre,
+            nota.terceiroBimestre,
+            nota.quartoBimestre
+          ].filter(n => n !== null && n !== undefined)
+           .reduce((sum, n) => sum + n, 0) / 4;
+          return acc + mediaNota;
+        }, 0) / aluno.notas.length;
+
+        if (mediaGeral < Number(criterios.mediaMinima)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  };
+
   const buscarAlunos = async () => {
     try {
-      const response = await alunoService.getAll(criterios);
-      console.log(response)
-      const dadosResultado = Array.isArray(response) 
+      const criteriosFiltrados = Object.fromEntries(
+        Object.entries(criterios).filter(([_, value]) => value !== '')
+      );
+
+      const response = await alunoService.getAll();
+      const todosAlunos = Array.isArray(response) 
         ? response 
         : (response.data || response.content || []);
       
-      setResultados(dadosResultado);
+      const resultadosFiltrados = filtrarResultados(todosAlunos, criteriosFiltrados);
+      setResultados(resultadosFiltrados);
 
-      if (dadosResultado.length === 0) {
+      if (resultadosFiltrados.length === 0) {
         toast.info('Nenhum aluno encontrado com esses critérios');
       }
     } catch (error) {
@@ -115,16 +174,32 @@ const BuscaAvancada = () => {
             {resultados.length > 0 ? (
               resultados.map(aluno => (
                 <div key={aluno.id} className="card-aluno">
-                  <h3>{aluno.nome}</h3>
-                  <p>Idade: {aluno.idade || 'N/A'}</p>
+                  <h3>{aluno.nome || 'Nome não informado'}</h3>
+                  <p>Idade: {aluno.idade || 
+                    (aluno.dataNascimento ? 
+                      new Date().getFullYear() - new Date(aluno.dataNascimento).getFullYear() 
+                      : 'N/A')
+                  }</p>
                   <p>Escola: {aluno.escola?.nome || 'N/A'}</p>
-                  <p>Média: {aluno.mediaGeral || 'N/A'}</p>
+                  <p>Média: {aluno.notas ? 
+                    (aluno.notas.reduce((acc, nota) => {
+                      const mediaNota = [
+                        nota.primeiroBimestre,
+                        nota.segundoBimestre,
+                        nota.terceiroBimestre,
+                        nota.quartoBimestre
+                      ].filter(n => n !== null && n !== undefined)
+                       .reduce((sum, n) => sum + n, 0) / 4;
+                      return acc + mediaNota;
+                    }, 0) / aluno.notas.length).toFixed(1)
+                    : 'N/A'
+                  }</p>
                   <button 
                     onClick={() => navigate(`/aluno/${aluno.id}`)}
                     className="button-detalhes"
-                    >
+                  >
                     Ver detalhes
-                    </button>
+                  </button>
                 </div>
               ))
             ) : (
