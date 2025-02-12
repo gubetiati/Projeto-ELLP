@@ -34,11 +34,11 @@ export default function FormFamilia() {
 
     return (
         <>
+
+            <main className="container">
             <header className="header">
                 <h2>Cadastro de família</h2>
             </header>
-
-            <main className="container">
                 <section className="titulo">
                     <h2>Família:</h2>
                 </section>
