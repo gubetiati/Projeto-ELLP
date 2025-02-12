@@ -146,12 +146,13 @@ const LancamentoNotas = () => {
     const notasAnteriores = getNotasAnteriores();
 
     return (
+        
         <div className="lancamento-notas-container">
-
-            <main className="container">
             <header className="header">
                 <h2>Lançamento de Notas</h2>
             </header>
+            <main className="container">
+            
                 <form onSubmit={handleSubmit(onSubmit)} className="form-notas">
                     <div className="form-section">
                         <div className="form-group">

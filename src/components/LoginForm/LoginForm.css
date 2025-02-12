@@ -62,6 +62,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%; /* Add this */
 }
 
 .form-group label {
@@ -69,13 +70,23 @@
   font-size: 1rem;
 }
 
-.form-group input {
+/* Updated input styles */
+.form-group input  {
+  width: 100%; /* Ensure full width */
   padding: 0.75rem;
   border: 1px solid #E5E7EB;
   border-radius: 10px;
   background-color: #F3F4F6;
   font-size: 1rem;
   color: black;
+  box-sizing: border-box; /* Include padding in width */
+}
+
+/* Add focus state */
+.form-group input:focus {
+  outline: none;
+  border-color: #60A5FA;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
 }
 
 .login-button {
@@ -88,6 +99,7 @@
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s;
+  width: 100%; /* Match input width */
 }
 
 .login-button:hover {

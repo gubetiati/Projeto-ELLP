@@ -85,11 +85,11 @@ export default function FormAluno() {
     return (
         <>
             <ToastContainer />
-
-            <main className="container">
-                <header className="header">
+            <header className="header">
                     <h2>Cadastro de Aluno</h2>
                 </header>
+            <main className="container">
+                
                 
                 <form onSubmit={handleSubmit(onSubmit)} className="form-aluno">
                     <div className="form-section">
