@@ -31,6 +31,7 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
+  color: black;
 }
 
 .form-group input:focus {
