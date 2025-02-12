@@ -34,7 +34,7 @@ export default function SideBar() {
             icon: 'src/assets/icons/disciplina.svg', 
             alt: 'Disciplina',
             path: '/disciplina' 
-          },
+        },
         {
             icon: 'src/assets/icons/notas.svg',
             alt: 'Lançar Notas',
@@ -70,13 +70,13 @@ export default function SideBar() {
                         key={index}
                         className={location.pathname === item.path ? 'active' : ''}
                     >
-                        <Link to={item.path}>
+                        <Link to={item.path} title={item.alt}>
                             <img 
                                 src={item.icon} 
                                 alt={item.alt} 
                                 className="sidebar-icon"
                             />
-                            <span className="tooltip">{item.alt}</span>
+                            <span className="menu-text">{item.alt}</span>
                         </Link>
                     </li>
                 ))}
