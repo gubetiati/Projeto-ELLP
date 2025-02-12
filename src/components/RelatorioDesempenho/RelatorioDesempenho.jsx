@@ -59,18 +59,65 @@ const RelatorioDesempenho = () => {
     }
 
     if (filtros.escola) {
-      alunosFiltrados = alunosFiltrados.filter(aluno => 
-        aluno.escola && aluno.escola.toLowerCase().includes(filtros.escola.toLowerCase())
-      );
-    }
+        alunosFiltrados = alunosFiltrados.filter(aluno => 
+          aluno.escola?.nome?.toLowerCase().includes(filtros.escola.toLowerCase())
+        );
+      }
 
     return alunosFiltrados;
+  };
+
+  const exportarParaCSV = () => {
+    const tabela = document.querySelector('.tabela-relatorio');
+    
+    const linhas = tabela.querySelectorAll('tbody tr');
+    
+    const dadosCSV = [
+      ['Aluno', 'Escola', 'Renda per capita', 'Média Geral', 'Evolução']
+    ];
+
+    linhas.forEach(linha => {
+      const colunas = linha.querySelectorAll('td');
+      dadosCSV.push([
+        colunas[0].textContent,  
+        colunas[1].textContent, 
+        colunas[2].textContent, 
+        colunas[3].textContent, 
+        colunas[4].textContent 
+      ]);
+    });
+
+    const csvContent = dadosCSV.map(linha => linha.join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'relatorio_desempenho.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
     <>
       <header className="header">
         <h2>Relatório de Desempenho Acadêmico</h2>
+        <button 
+          onClick={exportarParaCSV}
+          style={{
+            marginLeft: '20px',
+            padding: '10px 15px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+        >
+          Exportar CSV
+        </button>
       </header>
 
       <main className="container">
@@ -112,7 +159,7 @@ const RelatorioDesempenho = () => {
                 {filtrarAlunos().map(aluno => (
                   <tr key={aluno.id}>
                     <td>{aluno.nome}</td>
-                    <td>{aluno.escola}</td>
+                    <td>{aluno.escola?.nome || 'N/A'}</td> 
                     <td>
                       {aluno.familia ? 
                         `R$ ${(aluno.familia.renda / aluno.familia.grupoFamiliar).toFixed(2)}` :
