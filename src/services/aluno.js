@@ -4,19 +4,39 @@ import api from './api';
 export const alunoService = {
     getAll: async () => {
         try {
-            const response = await api.get('/aluno');
-            const data = response.data;
-            return Array.isArray(data) ? data : [];
+            const [alunosResponse, notasResponse] = await Promise.all([
+                api.get('/aluno'),
+                api.get('/nota')
+            ]);
+
+            const alunos = alunosResponse.data;
+            const todasNotas = notasResponse.data;
+
+            const alunosComNotas = alunos.map(aluno => ({
+                ...aluno,
+                notas: todasNotas.filter(nota => nota.idAluno === aluno.id)
+            }));
+
+            return Array.isArray(alunos) ? alunosComNotas : [];
         } catch (error) {
-            console.error('Erro ao buscar alunos:', error);
+            console.error('Erro ao buscar dados:', error);
             throw error;
         }
     },
 
     getById: async (id) => {
         try {
-            const response = await api.get(`/aluno/${id}`);
-            return response.data;
+            const [alunoResponse, notasResponse] = await Promise.all([
+                api.get(`/aluno/${id}`),
+                api.get('/nota')
+            ]);
+
+            const notas = notasResponse.data.filter(nota => nota.idAluno === id);
+
+            return {
+                ...alunoResponse.data,
+                notas: notas
+            };
         } catch (error) {
             throw error;
         }
