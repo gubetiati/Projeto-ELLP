@@ -5,9 +5,11 @@ import './FormAluno.css';
 import { alunoService } from '../../services/aluno';
 import { useState, useEffect } from 'react';
 import { familiaService } from '../../services/familia';
+import { escolaService } from '../../services/escola';
 
 export default function FormAluno() {
     const [familias, setFamilias] = useState([]);
+    const [escolas, setEscolas] = useState([]);
 
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
         defaultValues: {
@@ -19,22 +21,28 @@ export default function FormAluno() {
             dataNascimento: '',
             necessitaTransporte: false,
             recebeAtendimentoMedico: false,
-            familiaId: ''
+            familiaId: '',
+            escolaId: ''
         }
     });
 
     useEffect(() => {
-        const carregarFamilias = async () => {
+        const carregarDados = async () => {
             try {
-                const response = await familiaService.getAll();
-                setFamilias(response);
+                const [familiasResponse, escolasResponse] = await Promise.all([
+                    familiaService.getAll(),
+                    escolaService.getAll()
+                ]);
+                
+                setFamilias(familiasResponse);
+                setEscolas(escolasResponse);
             } catch (error) {
-                toast.error('Erro ao carregar famílias');
-                console.error('Erro ao carregar famílias:', error);
+                toast.error('Erro ao carregar dados');
+                console.error('Erro ao carregar dados:', error);
             }
         };
 
-        carregarFamilias();
+        carregarDados();
     }, []);
 
     const onSubmit = async (data) => {
@@ -52,6 +60,9 @@ export default function FormAluno() {
                 recebeAtendimentoMedico: data.recebeAtendimentoMedico,
                 familia: {
                     id: data.familiaId
+                },
+                escola: {
+                    id: data.escolaId
                 }
             };
 
@@ -74,11 +85,12 @@ export default function FormAluno() {
     return (
         <>
             <ToastContainer />
-            <header className="header">
-                <h2>Cadastro de Aluno</h2>
-            </header>
 
             <main className="container">
+                <header className="header">
+                    <h2>Cadastro de Aluno</h2>
+                </header>
+                
                 <form onSubmit={handleSubmit(onSubmit)} className="form-aluno">
                     <div className="form-section">
                         <h3>Dados Pessoais</h3>
@@ -151,6 +163,43 @@ export default function FormAluno() {
                     </div>
 
                     <div className="form-section">
+                        <h3>Vínculos</h3>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="familiaId">Família</label>
+                                <select
+                                    id="familiaId"
+                                    {...register('familiaId', { required: 'Família é obrigatória' })}
+                                >
+                                    <option value="">Selecione uma família</option>
+                                    {familias.map((familia) => (
+                                        <option key={familia.id} value={familia.id}>
+                                            Família {familia.grupoFamiliar} - Renda: R$ {familia.renda}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.familiaId && <span className="error">{errors.familiaId.message}</span>}
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="escolaId">Escola</label>
+                                <select
+                                    id="escolaId"
+                                    {...register('escolaId', { required: 'Escola é obrigatória' })}
+                                >
+                                    <option value="">Selecione uma escola</option>
+                                    {escolas.map((escola) => (
+                                        <option key={escola.id} value={escola.id}>
+                                            {escola.nome}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.escolaId && <span className="error">{errors.escolaId.message}</span>}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="form-section">
                         <h3>Informações Adicionais</h3>
                         <div className="form-row checkbox-row">
                             <div className="form-group checkbox-group">
@@ -172,22 +221,6 @@ export default function FormAluno() {
                                     Recebe Atendimento Médico
                                 </label>
                             </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="familiaId">Família</label>
-                            <select
-                                id="familiaId"
-                                {...register('familiaId', { required: 'Família é obrigatória' })}
-                            >
-                                <option value="">Selecione uma família</option>
-                                {familias.map((familia) => (
-                                    <option key={familia.id} value={familia.id}>
-                                        Família {familia.grupoFamiliar} - Renda: R$ {familia.renda}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.familiaId && <span className="error">{errors.familiaId.message}</span>}
                         </div>
                     </div>
 
