@@ -16,10 +16,10 @@ export default function Form() {
 
     return (
         <>
+
             <header className="header">
                 <h2>Cadastro de aluno</h2>
             </header>
-
             <main className="container">
                 <section className="titulo">
                     <h2>Aluno:</h2>
